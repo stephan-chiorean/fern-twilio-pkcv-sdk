@@ -7,10 +7,17 @@
     "examples/test-app"
   ],
   "scripts": {
-    "test:signing": "node scripts/test-pkcv.mjs"
+    "test:signing": "node scripts/test-pkcv.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "dotenv": "^17.4.1",
     "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.19.17",
+    "vitest": "^3.2.4"
   }
 }

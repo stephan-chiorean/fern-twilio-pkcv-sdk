@@ -1,11 +1,9 @@
-# Custom PKCV implementation — added in Phase 4
+# Custom PKCV implementation - regeneration must never overwrite these
+pkcv/**
+wrapper/**
 
-# src/pkcv/\*\*
+# index.ts override - exports TwilioPkcvClient as TwilioClient
+index.ts
 
-# src/wrapper/\*\*
-
-# src/index.ts
-
-# Docs
-
+# Human-authored docs
 README.md
