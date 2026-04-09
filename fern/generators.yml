@@ -2,12 +2,26 @@
 api:
   specs:
     - openapi: ../openapi/twilio_verify_v2.yaml
+      overlays: openapi-overlays.yml
 default-group: local
 groups:
   local:
     generators:
       - name: fern-typescript-sdk
+        version: 3.63.1
         output:
           location: local-file-system
           path: ../sdks/typescript
-        version: 3.63.1
+        config:
+          allowCustomFetcher: true
+          offsetSemantics: page-index
+          noSerdeLayer: false
+          neverThrowErrors: false
+          namespaceExport: Twilio
+          packageJson:
+            name: "@twilio/verify-sdk"
+            version: "0.0.1"
+            dependencies:
+              jsonwebtoken: "^9.0.2"
+            devDependencies:
+              "@types/jsonwebtoken": "^9.0.0"

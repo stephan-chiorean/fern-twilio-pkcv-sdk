@@ -1,0 +1,353 @@
+overlay: 1.0.0
+info:
+  title: Verify v2 SDK customizations
+  version: 0.0.1
+actions:
+
+  # --- Pagination ---
+
+  - target: "$.paths['/v2/Services'].get"
+    update:
+      x-fern-pagination:
+        cursor: $request.PageToken
+        next_cursor: $response.meta.next_page_url
+        results: $response.services
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities'].get"
+    update:
+      x-fern-pagination:
+        cursor: $request.PageToken
+        next_cursor: $response.meta.next_page_url
+        results: $response.entities
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Factors'].get"
+    update:
+      x-fern-pagination:
+        cursor: $request.PageToken
+        next_cursor: $response.meta.next_page_url
+        results: $response.factors
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Challenges'].get"
+    update:
+      x-fern-pagination:
+        cursor: $request.PageToken
+        next_cursor: $response.meta.next_page_url
+        results: $response.challenges
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits'].get"
+    update:
+      x-fern-pagination:
+        cursor: $request.PageToken
+        next_cursor: $response.meta.next_page_url
+        results: $response.rate_limits
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits/{RateLimitSid}/Buckets'].get"
+    update:
+      x-fern-pagination:
+        cursor: $request.PageToken
+        next_cursor: $response.meta.next_page_url
+        results: $response.buckets
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/MessagingConfigurations'].get"
+    update:
+      x-fern-pagination:
+        cursor: $request.PageToken
+        next_cursor: $response.meta.next_page_url
+        results: $response.messaging_configurations
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/Webhooks'].get"
+    update:
+      x-fern-pagination:
+        cursor: $request.PageToken
+        next_cursor: $response.meta.next_page_url
+        results: $response.webhooks
+
+  - target: "$.paths['/v2/Attempts'].get"
+    update:
+      x-fern-pagination:
+        cursor: $request.PageToken
+        next_cursor: $response.meta.next_page_url
+        results: $response.attempts
+
+  - target: "$.paths['/v2/Templates'].get"
+    update:
+      x-fern-pagination:
+        cursor: $request.PageToken
+        next_cursor: $response.meta.next_page_url
+        results: $response.templates
+
+  # --- Services ---
+
+  - target: "$.paths['/v2/Services'].get"
+    update:
+      x-fern-sdk-group-name: services
+      x-fern-sdk-method-name: list
+  - target: "$.paths['/v2/Services'].post"
+    update:
+      x-fern-sdk-group-name: services
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/Services/{Sid}'].get"
+    update:
+      x-fern-sdk-group-name: services
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/Services/{Sid}'].post"
+    update:
+      x-fern-sdk-group-name: services
+      x-fern-sdk-method-name: update
+  - target: "$.paths['/v2/Services/{Sid}'].delete"
+    update:
+      x-fern-sdk-group-name: services
+      x-fern-sdk-method-name: delete
+
+  # --- Entities ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities'].get"
+    update:
+      x-fern-sdk-group-name: entities
+      x-fern-sdk-method-name: list
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities'].post"
+    update:
+      x-fern-sdk-group-name: entities
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}'].get"
+    update:
+      x-fern-sdk-group-name: entities
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}'].delete"
+    update:
+      x-fern-sdk-group-name: entities
+      x-fern-sdk-method-name: delete
+
+  # --- Factors ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Factors'].get"
+    update:
+      x-fern-sdk-group-name: factors
+      x-fern-sdk-method-name: list
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Factors'].post"
+    update:
+      x-fern-sdk-group-name: factors
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Factors/{Sid}'].get"
+    update:
+      x-fern-sdk-group-name: factors
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Factors/{Sid}'].post"
+    update:
+      x-fern-sdk-group-name: factors
+      x-fern-sdk-method-name: update
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Factors/{Sid}'].delete"
+    update:
+      x-fern-sdk-group-name: factors
+      x-fern-sdk-method-name: delete
+  - target: "$.paths['/v2/Services/{ServiceSid}/Passkeys/Factors'].post"
+    update:
+      x-fern-sdk-group-name: factors
+      x-fern-sdk-method-name: createPasskey
+  - target: "$.paths['/v2/Services/{ServiceSid}/Passkeys/VerifyFactor'].post"
+    update:
+      x-fern-sdk-group-name: factors
+      x-fern-sdk-method-name: verifyPasskey
+
+  # --- Challenges ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Challenges'].get"
+    update:
+      x-fern-sdk-group-name: challenges
+      x-fern-sdk-method-name: list
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Challenges'].post"
+    update:
+      x-fern-sdk-group-name: challenges
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Challenges/{Sid}'].get"
+    update:
+      x-fern-sdk-group-name: challenges
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Challenges/{Sid}'].post"
+    update:
+      x-fern-sdk-group-name: challenges
+      x-fern-sdk-method-name: update
+  - target: "$.paths['/v2/Services/{ServiceSid}/Passkeys/Challenges'].post"
+    update:
+      x-fern-sdk-group-name: challenges
+      x-fern-sdk-method-name: createPasskey
+  - target: "$.paths['/v2/Services/{ServiceSid}/Passkeys/ApproveChallenge'].post"
+    update:
+      x-fern-sdk-group-name: challenges
+      x-fern-sdk-method-name: approvePasskey
+
+  # --- Access Tokens ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/AccessTokens'].post"
+    update:
+      x-fern-sdk-group-name: accessTokens
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/Services/{ServiceSid}/AccessTokens/{Sid}'].get"
+    update:
+      x-fern-sdk-group-name: accessTokens
+      x-fern-sdk-method-name: fetch
+
+  # --- Notifications ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/Entities/{Identity}/Challenges/{ChallengeSid}/Notifications'].post"
+    update:
+      x-fern-sdk-group-name: notifications
+      x-fern-sdk-method-name: create
+
+  # --- Verifications ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/Verifications'].post"
+    update:
+      x-fern-sdk-group-name: verifications
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/Services/{ServiceSid}/Verifications/{Sid}'].get"
+    update:
+      x-fern-sdk-group-name: verifications
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/Services/{ServiceSid}/Verifications/{Sid}'].post"
+    update:
+      x-fern-sdk-group-name: verifications
+      x-fern-sdk-method-name: update
+
+  # --- Verification Checks ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/VerificationCheck'].post"
+    update:
+      x-fern-sdk-group-name: verificationChecks
+      x-fern-sdk-method-name: create
+
+  # --- Verification Attempts ---
+
+  - target: "$.paths['/v2/Attempts'].get"
+    update:
+      x-fern-sdk-group-name: verificationAttempts
+      x-fern-sdk-method-name: list
+  - target: "$.paths['/v2/Attempts/{Sid}'].get"
+    update:
+      x-fern-sdk-group-name: verificationAttempts
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/Attempts/Summary'].get"
+    update:
+      x-fern-sdk-group-name: verificationAttempts
+      x-fern-sdk-method-name: fetchSummary
+
+  # --- Rate Limits ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits'].get"
+    update:
+      x-fern-sdk-group-name: rateLimits
+      x-fern-sdk-method-name: list
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits'].post"
+    update:
+      x-fern-sdk-group-name: rateLimits
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits/{Sid}'].get"
+    update:
+      x-fern-sdk-group-name: rateLimits
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits/{Sid}'].post"
+    update:
+      x-fern-sdk-group-name: rateLimits
+      x-fern-sdk-method-name: update
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits/{Sid}'].delete"
+    update:
+      x-fern-sdk-group-name: rateLimits
+      x-fern-sdk-method-name: delete
+
+  # --- Buckets ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits/{RateLimitSid}/Buckets'].get"
+    update:
+      x-fern-sdk-group-name: buckets
+      x-fern-sdk-method-name: list
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits/{RateLimitSid}/Buckets'].post"
+    update:
+      x-fern-sdk-group-name: buckets
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits/{RateLimitSid}/Buckets/{Sid}'].get"
+    update:
+      x-fern-sdk-group-name: buckets
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits/{RateLimitSid}/Buckets/{Sid}'].post"
+    update:
+      x-fern-sdk-group-name: buckets
+      x-fern-sdk-method-name: update
+  - target: "$.paths['/v2/Services/{ServiceSid}/RateLimits/{RateLimitSid}/Buckets/{Sid}'].delete"
+    update:
+      x-fern-sdk-group-name: buckets
+      x-fern-sdk-method-name: delete
+
+  # --- Messaging Configurations ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/MessagingConfigurations'].get"
+    update:
+      x-fern-sdk-group-name: messagingConfigurations
+      x-fern-sdk-method-name: list
+  - target: "$.paths['/v2/Services/{ServiceSid}/MessagingConfigurations'].post"
+    update:
+      x-fern-sdk-group-name: messagingConfigurations
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/Services/{ServiceSid}/MessagingConfigurations/{Country}'].get"
+    update:
+      x-fern-sdk-group-name: messagingConfigurations
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/Services/{ServiceSid}/MessagingConfigurations/{Country}'].post"
+    update:
+      x-fern-sdk-group-name: messagingConfigurations
+      x-fern-sdk-method-name: update
+  - target: "$.paths['/v2/Services/{ServiceSid}/MessagingConfigurations/{Country}'].delete"
+    update:
+      x-fern-sdk-group-name: messagingConfigurations
+      x-fern-sdk-method-name: delete
+
+  # --- Webhooks ---
+
+  - target: "$.paths['/v2/Services/{ServiceSid}/Webhooks'].get"
+    update:
+      x-fern-sdk-group-name: webhooks
+      x-fern-sdk-method-name: list
+  - target: "$.paths['/v2/Services/{ServiceSid}/Webhooks'].post"
+    update:
+      x-fern-sdk-group-name: webhooks
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/Services/{ServiceSid}/Webhooks/{Sid}'].get"
+    update:
+      x-fern-sdk-group-name: webhooks
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/Services/{ServiceSid}/Webhooks/{Sid}'].post"
+    update:
+      x-fern-sdk-group-name: webhooks
+      x-fern-sdk-method-name: update
+  - target: "$.paths['/v2/Services/{ServiceSid}/Webhooks/{Sid}'].delete"
+    update:
+      x-fern-sdk-group-name: webhooks
+      x-fern-sdk-method-name: delete
+
+  # --- Templates ---
+
+  - target: "$.paths['/v2/Templates'].get"
+    update:
+      x-fern-sdk-group-name: templates
+      x-fern-sdk-method-name: list
+
+  # --- Safelist ---
+
+  - target: "$.paths['/v2/SafeList/Numbers'].post"
+    update:
+      x-fern-sdk-group-name: safelist
+      x-fern-sdk-method-name: create
+  - target: "$.paths['/v2/SafeList/Numbers/{PhoneNumber}'].get"
+    update:
+      x-fern-sdk-group-name: safelist
+      x-fern-sdk-method-name: fetch
+  - target: "$.paths['/v2/SafeList/Numbers/{PhoneNumber}'].delete"
+    update:
+      x-fern-sdk-group-name: safelist
+      x-fern-sdk-method-name: delete
+
+  # --- Forms ---
+
+  - target: "$.paths['/v2/Forms/{FormType}'].get"
+    update:
+      x-fern-sdk-group-name: forms
+      x-fern-sdk-method-name: fetch
