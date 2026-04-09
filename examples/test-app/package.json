@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "tsx src/index.ts"
+    "clean": "rm -rf dist",
+    "build": "tsc -p tsconfig.json",
+    "start": "npm run clean && npm run build && node dist/index.js",
+    "start:dry-run": "TWILIO_PKCV_EXAMPLE_DRY_RUN=true npm run start"
   },
   "dependencies": {
-    "dotenv": "^17.4.1"
+    "dotenv": "^17.4.1",
+    "fern-twilio-pkcv-sdk": "file:../../sdks/typescript"
   },
   "devDependencies": {
-    "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   }
 }

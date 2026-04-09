@@ -19,7 +19,7 @@ groups:
           neverThrowErrors: false
           namespaceExport: Twilio
           packageJson:
-            name: "@twilio/verify-sdk"
+            name: "fern-twilio-pkcv-sdk"
             version: "0.0.1"
             dependencies:
               jsonwebtoken: "^9.0.2"

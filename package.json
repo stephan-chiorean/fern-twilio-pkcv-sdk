@@ -7,6 +7,12 @@
     "examples/test-app"
   ],
   "scripts": {
+    "build:sdk": "npm run build --workspace sdks/typescript",
+    "example:start": "npm run build:sdk && npm run start --workspace examples/test-app",
+    "example:dry-run": "npm run build:sdk && npm run start:dry-run --workspace examples/test-app",
+    "test:e2e": "npm run example:dry-run",
+    "publish:dry-run": "npm run publish:dry-run --workspace sdks/typescript",
+    "publish:sdk": "npm run publish:sdk --workspace sdks/typescript",
     "test:signing": "node scripts/test-pkcv.mjs",
     "test": "vitest run",
     "test:watch": "vitest"

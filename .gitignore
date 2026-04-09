@@ -2,5 +2,8 @@
 private_key.pem
 public_key.pem
 node_modules/
+.npm-cache/
+sdks/typescript/dist/
+examples/test-app/dist/
 private_key_unencrypted.pem
 .bluekit

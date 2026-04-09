@@ -5,5 +5,9 @@ wrapper/**
 # index.ts override - exports TwilioPkcvClient as TwilioClient
 index.ts
 
+# Publish-time package metadata and build config
+package.json
+tsconfig.build.json
+
 # Human-authored docs
 README.md
