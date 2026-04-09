@@ -11,6 +11,10 @@ I translated that into two concrete technical goals:
 - Trust: every request should be signed and verifiable (PKCV).
 - Adoption: SDK consumers should get a clean dev-friendly experience without carrying auth complexity into endpoint-level usage.
 
+### OpenAPI Spec Used
+
+[`twilio_verify_v2.yaml`](https://github.com/twilio/twilio-oai/blob/main/spec/yaml/twilio_verify_v2.yaml) — selected for its breadth, meaningful list endpoints with `PageToken` and `meta.next_page_url` (making pagination overlays testable), and nested resources where method/group naming improves real SDK usability.
+
 ---
 
 ## Problem Framing
@@ -23,7 +27,7 @@ Twilio's PKCV flow requires canonicalization, hashing, JWT signing, and custom h
 
 That boundary drove everything I did afterward.
 
-### Documentation Citations I Used
+### Documentation Used
 
 Twilio sources:
 
@@ -43,7 +47,7 @@ Fern sources:
 
 ---
 
-## Research Phase (What I Needed to Understand First)
+## Research Phase
 
 Before I implemented anything, I had two research tracks in parallel: Twilio protocol details and Fern generation/customization mechanics.
 
@@ -97,16 +101,6 @@ const token = jwt.sign(
 ```
 
 I wanted protocol confidence before architecture wiring. Once this script behaved correctly, I knew implementation risk was mostly integration risk, not crypto interpretation risk.
-
-#### OpenAPI Slice Selection (Research Decision)
-
-I selected `twilio_verify_v2.yaml`.
-
-I chose it because:
-
-- It has enough breadth to validate generation quality.
-- It has meaningful list endpoints with `PageToken` and `meta.next_page_url`, which made pagination overlays testable.
-- It has nested resources where method/group naming improves real SDK usability.
 
 ### 2. Fern Research Track
 
