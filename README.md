@@ -31,19 +31,19 @@ That boundary drove everything I did afterward.
 
 Twilio sources:
 
-- [T1] [Twilio PKCV quickstart](https://www.twilio.com/docs/iam/pkcv/quickstart)
-- [T2] [Twilio OpenAPI structure](https://www.twilio.com/docs/openapi/structure-of-twilio-openapi-spec)
-- [T3] [Twilio OpenAPI repo (`twilio-oai`)](https://github.com/twilio/twilio-oai)
+- [Twilio PKCV quickstart](https://www.twilio.com/docs/iam/pkcv/quickstart)
+- [Twilio OpenAPI structure](https://www.twilio.com/docs/openapi/structure-of-twilio-openapi-spec)
+- [Twilio OpenAPI repo (`twilio-oai`)](https://github.com/twilio/twilio-oai)
 
 Fern sources:
 
-- [F1] [Fern TypeScript quickstart](https://buildwithfern.com/learn/sdks/generators/typescript/quickstart)
-- [F2] [Fern TypeScript configuration](https://buildwithfern.com/learn/sdks/generators/typescript/configuration)
-- [F3] [Fern dynamic authentication (`allowCustomFetcher`)](https://buildwithfern.com/learn/sdks/generators/typescript/dynamic-authentication)
-- [F4] [Fern OpenAPI overlays](https://buildwithfern.com/learn/api-definitions/openapi/overlays)
-- [F5] [Fern OpenAPI extensions overview](https://buildwithfern.com/learn/api-definitions/openapi/extensions/overview)
-- [F6] [Fern method names extension](https://buildwithfern.com/learn/api-definition/openapi/extensions/method-names)
-- [F7] [Fern custom code in TypeScript SDKs](https://buildwithfern.com/learn/sdks/generators/typescript/custom-code)
+- [Fern TypeScript quickstart](https://buildwithfern.com/learn/sdks/generators/typescript/quickstart)
+- [Fern TypeScript configuration](https://buildwithfern.com/learn/sdks/generators/typescript/configuration)
+- [Fern dynamic authentication (`allowCustomFetcher`)](https://buildwithfern.com/learn/sdks/generators/typescript/dynamic-authentication)
+- [Fern OpenAPI overlays](https://buildwithfern.com/learn/api-definitions/openapi/overlays)
+- [Fern OpenAPI extensions overview](https://buildwithfern.com/learn/api-definitions/openapi/extensions/overview)
+- [Fern method names extension](https://buildwithfern.com/learn/api-definition/openapi/extensions/method-names)
+- [Fern custom code in TypeScript SDKs](https://buildwithfern.com/learn/sdks/generators/typescript/custom-code)
 
 ---
 
@@ -53,8 +53,6 @@ Before I implemented anything, I had two research tracks in parallel: Twilio pro
 
 ### 1. Twilio Research Track
 
-Primary references: [T1], [T2], [T3].
-
 I focused on answering:
 
 - What exactly is Twilio expecting for PKCV signing flow?
@@ -63,9 +61,9 @@ I focused on answering:
 
 What I extracted:
 
-- PKCV flow: canonical request -> SHA-256 request hash (`rqh`) -> JWT with `hrh` + `rqh` -> `Twilio-Client-Validation` header ([T1]).
-- Canonicalization is strict: method/path/query/headers/body formatting must be exact ([T1]).
-- JWT claim/header semantics (`iss`, `sub`, `kid`, `nbf`, `exp`, `hrh`, `rqh`, `cty`) are non-negotiable ([T1]).
+- PKCV flow: canonical request -> SHA-256 request hash (`rqh`) -> JWT with `hrh` + `rqh` -> `Twilio-Client-Validation` header.
+- Canonicalization is strict: method/path/query/headers/body formatting must be exact.
+- JWT claim/header semantics (`iss`, `sub`, `kid`, `nbf`, `exp`, `hrh`, `rqh`, `cty`) are non-negotiable.
 
 To make sure I truly understood the protocol before SDK wiring, I wrote a proof script:
 
@@ -104,8 +102,6 @@ I wanted protocol confidence before architecture wiring. Once this script behave
 
 ### 2. Fern Research Track
 
-Primary references: [F1], [F2], [F3], [F4], [F5], [F6], [F7].
-
 I focused on answering:
 
 - How should I structure TS generation config cleanly?
@@ -115,10 +111,10 @@ I focused on answering:
 
 What I extracted and used:
 
-- `allowCustomFetcher` is the right hook for auth that cannot be modeled in OpenAPI ([F3]).
-- `generators.yml` should own generator behavior and package settings ([F1], [F2]).
-- Overlays should carry method naming, grouping, and pagination metadata ([F4], [F5], [F6]).
-- Custom code should be isolated and protected from regeneration ([F7]).
+- `allowCustomFetcher` is the right hook for auth that cannot be modeled in OpenAPI.
+- `generators.yml` should own generator behavior and package settings.
+- Overlays should carry method naming, grouping, and pagination metadata.
+- Custom code should be isolated and protected from regeneration.
 
 Directly applied configuration:
 
@@ -149,11 +145,6 @@ config:
 ## Planning Phase
 
 I spent most of my effort in planning so implementation could stay predictable.
-
-Planning inputs I used:
-
-- Twilio protocol/spec sources: [T1], [T2], [T3]
-- Fern generation/customization sources: [F1], [F2], [F3], [F4], [F5], [F6], [F7]
 
 ### Planning Decision 1: Define a Stable Auth Contract Before Writing Any Integration Code
 
@@ -186,7 +177,6 @@ export interface TwilioPkcvSignerOptions {
 
 Why I planned this first:
 I wanted the fetcher and wrapper to depend on one stable interface, while keeping canonicalization/JWT details isolated to one signer class.
-Reference trail: [T1], [F3], [F7].
 
 ### Planning Decision 2: Design the Full Request-Boundary Signing Pipeline Up Front
 
@@ -234,7 +224,6 @@ export function createPkcvFetcher(signer: RequestSigner): FetchFunction {
 ### Planning Decision 3: Usability in Overlays Before Generation
 
 I wanted generated output to already map to developer mental models (`list`, `fetch`, `create`, `update`, `delete`) and support iterator-friendly list behavior.
-Reference trail: [F4], [F5], [F6].
 
 ```yaml
 # fern/openapi-overlays.yml (representative subset)
