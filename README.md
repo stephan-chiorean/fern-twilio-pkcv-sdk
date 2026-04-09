@@ -1,8 +1,10 @@
 # Fern + Twilio PKCV SDK
+
 ---
 
 ## Objective
-I started from what I saw as the customer's underlying business intent: improve trust and adoption through the SDK. 
+
+I started from the customer's underlying business intent: improve trust and adoption through the SDK.
 
 I translated that into two concrete technical goals:
 
@@ -10,6 +12,7 @@ I translated that into two concrete technical goals:
 - Adoption: SDK consumers should get a clean dev-friendly experience without carrying auth complexity into endpoint-level usage.
 
 ---
+
 ## Problem Framing
 
 Twilio's PKCV flow requires canonicalization, hashing, JWT signing, and custom header injection on every request.
@@ -21,6 +24,7 @@ Twilio's PKCV flow requires canonicalization, hashing, JWT signing, and custom h
 That boundary drove everything I did afterward.
 
 ### Documentation Citations I Used
+
 Twilio sources:
 
 - [T1] [Twilio PKCV quickstart](https://www.twilio.com/docs/iam/pkcv/quickstart)
@@ -40,9 +44,11 @@ Fern sources:
 ---
 
 ## Research Phase (What I Needed to Understand First)
+
 Before I implemented anything, I had two research tracks in parallel: Twilio protocol details and Fern generation/customization mechanics.
 
 ### 1. Twilio Research Track
+
 Primary references: [T1], [T2], [T3].
 
 I focused on answering:
@@ -61,7 +67,13 @@ To make sure I truly understood the protocol before SDK wiring, I wrote a proof 
 
 ```js
 // scripts/test-pkcv.mjs
-const parts = [method, url.pathname || "/", "", canonicalHeaders, signedHeaders];
+const parts = [
+  method,
+  url.pathname || "/",
+  "",
+  canonicalHeaders,
+  signedHeaders,
+];
 if (body) parts.push(sha256Hex(body));
 
 const canonicalRequest = parts.join("\n");
@@ -96,8 +108,8 @@ I chose it because:
 - It has meaningful list endpoints with `PageToken` and `meta.next_page_url`, which made pagination overlays testable.
 - It has nested resources where method/group naming improves real SDK usability.
 
-
 ### 2. Fern Research Track
+
 Primary references: [F1], [F2], [F3], [F4], [F5], [F6], [F7].
 
 I focused on answering:
@@ -141,6 +153,7 @@ config:
 ---
 
 ## Planning Phase
+
 I spent most of my effort in planning so implementation could stay predictable.
 
 Planning inputs I used:
@@ -149,6 +162,7 @@ Planning inputs I used:
 - Fern generation/customization sources: [F1], [F2], [F3], [F4], [F5], [F6], [F7]
 
 ### Planning Decision 1: Define a Stable Auth Contract Before Writing Any Integration Code
+
 I wanted to lock the abstraction boundary first so I would not leak Twilio-specific logic into generated clients.
 
 ```ts
@@ -181,6 +195,7 @@ I wanted the fetcher and wrapper to depend on one stable interface, while keepin
 Reference trail: [T1], [F3], [F7].
 
 ### Planning Decision 2: Design the Full Request-Boundary Signing Pipeline Up Front
+
 This fetcher resolves the final URL/query, materializes headers and body, signs that exact request, adds the Twilio-Client-Validation header, and then sends it through Fern’s default fetcher.
 
 ```ts
@@ -196,7 +211,8 @@ export function createPkcvFetcher(signer: RequestSigner): FetchFunction {
         const resolved = await EndpointSupplier.get(value, {
           endpointMetadata: args.endpointMetadata ?? {},
         });
-        if (resolved != null) signingHeaders[key.toLowerCase()] = String(resolved);
+        if (resolved != null)
+          signingHeaders[key.toLowerCase()] = String(resolved);
       }
     }
 
@@ -221,9 +237,8 @@ export function createPkcvFetcher(signer: RequestSigner): FetchFunction {
 }
 ```
 
-
-
 ### Planning Decision 3: Usability in Overlays Before Generation
+
 I wanted generated output to already map to developer mental models (`list`, `fetch`, `create`, `update`, `delete`) and support iterator-friendly list behavior.
 Reference trail: [F4], [F5], [F6].
 
@@ -254,6 +269,7 @@ Reference trail: [F4], [F5], [F6].
 ```
 
 ### Planning Decision 4: Define a Concrete Test Matrix Before Implementing Production Code
+
 I planned a test matrix with explicit behaviors to catch both protocol bugs and integration drift.
 
 ```ts
@@ -283,7 +299,9 @@ describe("SDK consumer flow", () => {
 ```
 
 ---
+
 ## Implementation Phase
+
 Implementation was relatively straightforward.
 
 Execution sequence I followed:
@@ -297,6 +315,7 @@ Execution sequence I followed:
 7. Protect custom files with `.fernignore`.
 
 ### Core Implementation Snippet 1: Twilio Signer (Canonicalization + JWT)
+
 ```ts
 // sdks/typescript/pkcv/TwilioPkcvSigner.ts (representative excerpt)
 public canonicalize(request: CanonicalRequest, hrh: string[]): string {
@@ -344,6 +363,7 @@ private buildJwt(canonicalString: string, hrh: string[]): string {
 ```
 
 ### Core Implementation Snippet 2: Custom Fetcher Wiring
+
 ```ts
 // sdks/typescript/wrapper/createPkcvFetcher.ts (representative excerpt)
 const resolvedUrl = createRequestUrl(args.url, args.queryParameters);
@@ -379,9 +399,10 @@ return fetcherImpl<R>({
 ```
 
 ### Core Implementation Snippet 3: Generated Client + Pagination + Wrapper Integration
+
 ```ts
 // generated call path (sdks/typescript/api/resources/services/client/Client.ts)
-const _response = await (this._options.fetcher ?? core.fetcher)({
+const _response = await(this._options.fetcher ?? core.fetcher)({
   url: core.url.join(baseUrl, "v2/Services"),
   method: "GET",
   headers: _headers,
@@ -392,9 +413,15 @@ return new core.Page({
   response: dataWithRawResponse.data,
   hasNextPage: (response) =>
     response?.meta?.nextPageUrl != null &&
-    !(typeof response?.meta?.nextPageUrl === "string" && response?.meta?.nextPageUrl === ""),
+    !(
+      typeof response?.meta?.nextPageUrl === "string" &&
+      response?.meta?.nextPageUrl === ""
+    ),
   getItems: (response) => response?.services ?? [],
-  loadPage: (response) => list(core.setObjectProperty(request, "pageToken", response?.meta?.nextPageUrl)),
+  loadPage: (response) =>
+    list(
+      core.setObjectProperty(request, "pageToken", response?.meta?.nextPageUrl)
+    ),
 });
 ```
 
@@ -413,10 +440,12 @@ super({
 
 ---
 
-## Testing Phase 
+## Testing Phase
+
 I validated everything against real code afterward.
 
 ### 1. Unit Tests (Signer and Canonicalization)
+
 Primary files:
 
 - `tests/unit/pkcv/canonicalize.test.ts`
@@ -441,8 +470,8 @@ expect(canonical.split("\n")).toHaveLength(7); // GET with no body
 expect(lines[7]).toBe(sha256(body)); // body hash when present
 ```
 
-
 ### 2. Integration Tests (Fetcher + Wrapper Wiring)
+
 Primary files:
 
 - `tests/integration/fetcher.test.ts`
@@ -464,8 +493,8 @@ expect(argsPassedToFetcherImpl?.headers).toMatchObject({
 });
 ```
 
-
 ### 3. End-to-End Consumer Flow
+
 Primary file:
 
 - `examples/test-app/src/index.ts`
@@ -482,7 +511,9 @@ Representative e2e guard:
 
 ```ts
 if (!sawPkcvHeader) {
-  throw new Error("PKCV signing check failed: request was sent without Twilio-Client-Validation");
+  throw new Error(
+    "PKCV signing check failed: request was sent without Twilio-Client-Validation"
+  );
 }
 ```
 
@@ -502,6 +533,7 @@ Artifacts:
 - `.bluekit/research/phase-6-publish/*` for repeatable publishing/validation runbooks.
 
 Published package:
+
 - [fern-twilio-pkcv-sdk](https://www.npmjs.com/package/fern-twilio-pkcv-sdk)
 
 Install commands:
@@ -561,14 +593,17 @@ Advanced mode is also supported:
 - pass `auth: RequestSigner` to inject a custom signer.
 
 ---
+
 ## Extensibility and Limitations
 
 ### Current project limitations
+
 - Full server-side PKCV verification depends on Twilio Enterprise/Security Edition capabilities.
 - This repository is intentionally scoped to one OpenAPI slice, not a full multi-spec Twilio SDK rollout.
 - Multi-spec expansion may require broader Fern project/license and packaging orchestration.
 
 ### Extensibility I designed in
+
 - `RequestSigner` abstraction lets me add alternate signers without touching generated endpoint clients.
 - `TwilioPkcvSigner` isolates Twilio-specific canonicalization/JWT rules for future changes.
 - Fetcher-level injection keeps behavior consistent as endpoint surface expands.
